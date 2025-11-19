@@ -1,3 +1,3 @@
 # Euphoric-Flora
 
-Our group number is #9, The E-commerce website we are building sells very nice, very beautiful flowers. All kinds of flowers. The website will have customer login, a checkout section.
+Our project is Group #9, and we are building an e-commerce website called Euphoric Flora — an online flower shop that sells very beautiful, high-quality flowers of all kinds. Our goal is to create a smooth and visually appealing shopping experience for customers looking to buy flowers for any occasion.
