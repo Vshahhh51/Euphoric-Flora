@@ -1,2 +1,2 @@
 # Euphoric-Flora
-We are Group #9, and we are building an e-commerce website called Euphoric Flora — an online flower shop that sells very beautiful, high-quality flowers of all kinds. Our goal is to create a smooth and visually appealing shopping experience for customers looking to buy flowers for any occasion.
+We are Group #9, and we are building an e-commerce website called Euphoric Flora — an online flower shop that sells very beautiful, high-quality flowers of all kinds. Our goal is to create a smooth and visually appealing shopping experience for customers looking to buy flowers for any occasion and mood. Our aim is to provide loved-ground with flowers between people and any differenced that can come in-between them.
