@@ -1,227 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Euphoric Flora</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Euphoric Flora</title>
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #fff;
-    color: #222;
-  }
+  <!-- Tailwind via CDN for all the utility classes you used -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  /* NAVBAR */
-  header {
-    border-bottom: 1px solid #ccc;
-    padding: 12px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .logo {
-    font-weight: bold;
-    font-size: 22px;
-  }
-  nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: #333;
-  }
-
-  /* HERO SECTION */
-  .hero {
-    padding: 40px 30px;
-  }
-  .hero h1 {
-    font-size: 40px;
-    margin-bottom: 5px;
-  }
-  .hero p {
-    margin-bottom: 20px;
-  }
-  .hero-buttons button {
-    padding: 12px 22px;
-    margin-right: 10px;
-    border: 1px solid #333;
-    background: #fff;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-
-  /* BEST SELLERS */
-  .best-sellers {
-    padding: 40px 30px;
-  }
-  .best-sellers h2 {
-    margin-bottom: 20px;
-  }
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-  }
-  .product {
-    border: 1px solid #ccc;
-    padding: 12px;
-    text-align: center;
-  }
-  .product-box {
-    border: 1px dashed #aaa;
-    height: 120px;
-    margin-bottom: 10px;
-  }
-
-  /* SIDEBAR FLOWERS LIST */
-  .layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    padding: 0 30px;
-    gap: 30px;
-  }
-  .flowers-list h3 {
-    margin-bottom: 15px;
-  }
-  .flowers-list div {
-    margin-bottom: 12px;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid #ccc;
-    padding: 20px 30px;
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    font-size: 15px;
-  }
-
-  /* MOBILE */
-  @media (max-width: 768px) {
-    header {
-      padding: 12px 20px;
-    }
-
-    nav {
-      display: none;
-    }
-
-    .menu-btn {
-      display: block;
-    }
-
-    .layout {
-      grid-template-columns: 1fr;
-    }
-
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    footer {
-      flex-direction: column;
-      text-align: center;
-    }
-  }
-</style>
+  <!-- (Optional) Your own extra CSS file if you want -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body class="min-h-screen">
+  <!-- React will render into this -->
+  <div id="root"></div>
 
-<!-- NAVBAR -->
-<header>
-  <div class="logo">🌸 Euphoric Flora</div>
+  <!-- React & ReactDOM (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">Store</a>
-    <a href="#">About</a>
-    <a href="#">FAQ</a>
-    <a href="#">Profile</a>
-    <a href="#">Login</a>
-  </nav>
-</header>
+  <!-- Babel to compile JSX in the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<!-- MAIN LAYOUT -->
-<div class="layout">
+  <!-- Your React code -->
+  <script type="text/babel" src="euphoric-flora.jsx"></script>
 
-  <!-- LEFT SECTION -->
-  <div>
-
-    <!-- HERO -->
-    <section class="hero">
-      <h1>Say it with Flowers.</h1>
-      <p>Same-day delivery in your city.</p>
-
-      <div class="hero-buttons">
-        <button>Shop All Flowers</button>
-        <button>Build Your Own Bouquet</button>
-      </div>
-    </section>
-
-    <!-- BEST SELLERS -->
-    <section class="best-sellers">
-      <h2>Best Sellers</h2>
-
-      <div class="product-grid">
-        <div class="product">
-          <div class="product-box"></div>
-          <p>Birthday</p>
-          <p>$ • Quick</p>
-        </div>
-
-        <div class="product">
-          <div class="product-box"></div>
-          <p>Anniversary</p>
-          <p>$ • Quick</p>
-        </div>
-
-        <div class="product">
-          <div class="product-box"></div>
-          <p>I'm Sorry</p>
-          <p>$ • Quick</p>
-        </div>
-
-        <div class="product">
-          <div class="product-box"></div>
-          <p>Just Because</p>
-          <p>$ • Quick</p>
-        </div>
-      </div>
-
-      <p style="margin-top: 20px;">★★★★★ “Perfect bouquet, arrived fresh.”</p>
-    </section>
-
-  </div>
-
-  <!-- RIGHT SIDEBAR -->
-  <aside class="flowers-list">
-    <h3>Flowers & Meanings</h3>
-    <div>🌹 <b>Roses</b><br><small>Love, passion, romance</small></div>
-    <div>🌼 <b>Daisies</b><br><small>Cheerfulness, innocence</small></div>
-    <div>🌷 <b>Tulips</b><br><small>Caring love</small></div>
-    <div>🌻 <b>Sunflowers</b><br><small>Joy, admiration</small></div>
-    <hr style="margin: 20px 0;">
-    <p>Contact</p>
-    <p>Shipping</p>
-    <p>Returns</p>
-    <p>Privacy</p>
-  </aside>
-
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <span>Contact</span>
-  <span>Shipping</span>
-  <span>Returns</span>
-  <span>Privacy</span>
-</footer>
-
+  <!-- Mount the app -->
+  <script type="text/babel">
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<EuphoricFlora />);
+  </script>
 </body>
 </html>
-
