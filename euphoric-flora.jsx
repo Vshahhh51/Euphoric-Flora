@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Search, ShoppingCart, Menu, X, Heart, Plus, Minus, Trash2, User, Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+const { useState } = React;
 
-const EuphoricFlora = () => {
+function EuphoricFlora() {
   const [cart, setCart] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,7 +21,7 @@ const EuphoricFlora = () => {
     { id: 10, name: 'Purple Orchids', category: 'orchids', price: 80, color: 'purple', icon: '🌺', description: 'Exotic purple orchids' },
     { id: 11, name: 'Birthday Bouquet', category: 'occasion', price: 45, color: 'mixed', icon: '🎉', description: 'Colorful mix for birthdays' },
     { id: 12, name: 'Anniversary Special', category: 'occasion', price: 65, color: 'red', icon: '💕', description: 'Romantic anniversary arrangement' },
-    { id: 13, name: 'Im Sorry Flowers', category: 'occasion', price: 55, color: 'mixed', icon: '💐', description: 'Apology bouquet with care' },
+    { id: 13, name: "Im Sorry Flowers", category: 'occasion', price: 55, color: 'mixed', icon: '💐', description: 'Apology bouquet with care' },
     { id: 14, name: 'Just Because', category: 'occasion', price: 40, color: 'mixed', icon: '🌈', description: 'Surprise someone special' }
   ];
 
@@ -40,8 +39,8 @@ const EuphoricFlora = () => {
   const addToCart = (product) => {
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
-      setCart(cart.map(item => 
-        item.id === product.id 
+      setCart(cart.map(item =>
+        item.id === product.id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       ));
@@ -51,11 +50,15 @@ const EuphoricFlora = () => {
   };
 
   const updateQuantity = (id, change) => {
-    setCart(cart.map(item => 
-      item.id === id 
-        ? { ...item, quantity: Math.max(0, item.quantity + change) }
-        : item
-    ).filter(item => item.quantity > 0));
+    setCart(
+      cart
+        .map(item =>
+          item.id === id
+            ? { ...item, quantity: Math.max(0, item.quantity + change) }
+            : item
+        )
+        .filter(item => item.quantity > 0)
+    );
   };
 
   const removeFromCart = (id) => {
@@ -78,13 +81,13 @@ const EuphoricFlora = () => {
     }
 
     const searchLower = query.toLowerCase();
-    const filtered = allProducts.filter(product => 
+    const filtered = allProducts.filter(product =>
       product.name.toLowerCase().includes(searchLower) ||
       product.category.toLowerCase().includes(searchLower) ||
       product.color.toLowerCase().includes(searchLower) ||
       product.description.toLowerCase().includes(searchLower)
     );
-    
+
     setDisplayedProducts(filtered.length > 0 ? filtered : allProducts.slice(10, 14));
   };
 
@@ -127,7 +130,7 @@ const EuphoricFlora = () => {
                 </div>
                 <h4 className="font-semibold text-amber-900 mb-1 text-sm">{item.name}</h4>
                 <p className="text-amber-800 mb-2 font-bold">$ {item.price}</p>
-                <button 
+                <button
                   onClick={() => addToCart(item)}
                   className="w-full px-3 py-2 bg-rose-200 text-amber-900 rounded hover:bg-rose-300 transition text-sm font-medium"
                 >
@@ -188,14 +191,14 @@ const EuphoricFlora = () => {
           <div className="bg-white border-2 border-rose-200 rounded-lg p-8">
             <div className="flex items-center mb-6">
               <div className="bg-rose-200 rounded-full p-4 mr-4">
-                <User size={48} className="text-amber-900" />
+                <span className="text-4xl">👤</span>
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-amber-900">Welcome back!</h3>
                 <p className="text-amber-800">user@example.com</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={handleLogout}
               className="px-6 py-2 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition"
             >
@@ -214,21 +217,21 @@ const EuphoricFlora = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-amber-900 mb-2 font-semibold">Email</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-300"
                   placeholder="your@email.com"
                 />
               </div>
               <div>
                 <label className="block text-amber-900 mb-2 font-semibold">Password</label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-300"
                   placeholder="Password"
                 />
               </div>
-              <button 
+              <button
                 onClick={handleLogin}
                 className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold"
               >
@@ -240,6 +243,7 @@ const EuphoricFlora = () => {
       );
     }
 
+    // HOME PAGE
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid md:grid-cols-3 gap-8">
@@ -247,28 +251,28 @@ const EuphoricFlora = () => {
             <section className="mb-8">
               <h2 className="text-5xl font-bold text-amber-900 mb-2">Say it with Flowers</h2>
               <p className="text-xl text-amber-800 mb-6">Same-day delivery in your city.</p>
-              
+
               <div className="bg-pink-200/40 border-2 border-rose-300 rounded-lg h-64 mb-6 flex items-center justify-center">
                 <div className="text-center text-rose-400">
-                  <Heart size={80} className="mx-auto mb-2" />
+                  <div className="text-6xl mb-2">❤️</div>
                   <p className="text-amber-800">Featured Arrangement</p>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-4">
-                <button 
+                <button
                   onClick={showAllFlowers}
                   className="px-6 py-3 bg-white border-2 border-amber-900 text-amber-900 rounded-lg hover:bg-amber-50 transition font-medium"
                 >
                   Shop All Flowers
                 </button>
-                <button 
+                <button
                   onClick={() => filterByCategory('occasion')}
                   className="px-6 py-3 bg-white border-2 border-amber-900 text-amber-900 rounded-lg hover:bg-amber-50 transition font-medium"
                 >
                   Build Your Own Bouquet
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     const justBecause = allProducts.find(p => p.name === 'Just Because');
                     if (justBecause) setDisplayedProducts([justBecause]);
@@ -292,7 +296,7 @@ const EuphoricFlora = () => {
                     </div>
                     <h4 className="font-semibold text-amber-900 mb-1 text-sm">{item.name}</h4>
                     <p className="text-amber-800 mb-2 font-bold">$ {item.price}</p>
-                    <button 
+                    <button
                       onClick={() => addToCart(item)}
                       className="w-full px-3 py-2 bg-rose-200 text-amber-900 rounded hover:bg-rose-300 transition text-sm font-medium"
                     >
@@ -338,16 +342,17 @@ const EuphoricFlora = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+      {/* HEADER */}
       <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold text-amber-900">Euphoric-Flora</h1>
-            
-            <button 
+
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden text-amber-900 bg-rose-200 p-2 rounded-lg"
             >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
             </button>
           </div>
 
@@ -358,7 +363,7 @@ const EuphoricFlora = () => {
             <button onClick={() => handleNavClick('faqs')} className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg">FAQs</button>
             {isLoggedIn ? (
               <button onClick={() => handleNavClick('profile')} className="hover:text-amber-700 transition flex items-center gap-2 font-medium px-3 py-2 bg-rose-100 rounded-lg">
-                <User size={18} />
+                <span>👤</span>
                 Profile
               </button>
             ) : (
@@ -375,7 +380,7 @@ const EuphoricFlora = () => {
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-rose-200 bg-white/80 focus:outline-none focus:border-rose-300"
               />
-              <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
+              <span className="absolute left-4 top-3.5 text-gray-400 text-lg">🔍</span>
             </div>
           )}
         </div>
@@ -397,8 +402,10 @@ const EuphoricFlora = () => {
         )}
       </header>
 
+      {/* MAIN CONTENT */}
       {renderPage()}
 
+      {/* FOOTER */}
       <footer className="bg-pink-100/80 border-t border-rose-200 mt-16">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
@@ -406,20 +413,20 @@ const EuphoricFlora = () => {
               <h3 className="font-bold text-amber-900 mb-4 text-lg">Contact Us</h3>
               <div className="space-y-2 text-amber-800">
                 <div className="flex items-center gap-2">
-                  <Phone size={18} />
+                  <span>📞</span>
                   <span>(555) 123-4567</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail size={18} />
+                  <span>✉️</span>
                   <span>hello@euphoricflora.com</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin size={18} />
+                  <span>📍</span>
                   <span>123 Bloom Street</span>
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-bold text-amber-900 mb-4 text-lg">Quick Links</h3>
               <div className="space-y-2">
@@ -427,18 +434,18 @@ const EuphoricFlora = () => {
                 <button onClick={() => handleNavClick('faqs')} className="block text-amber-800 hover:text-amber-700 transition">FAQs</button>
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-bold text-amber-900 mb-4 text-lg">Follow Us</h3>
               <div className="flex gap-4">
                 <a href="#" className="bg-rose-200 p-3 rounded-full hover:bg-rose-300 transition">
-                  <Facebook size={20} className="text-amber-900" />
+                  <span>📘</span>
                 </a>
                 <a href="#" className="bg-rose-200 p-3 rounded-full hover:bg-rose-300 transition">
-                  <Instagram size={20} className="text-amber-900" />
+                  <span>📸</span>
                 </a>
                 <a href="#" className="bg-rose-200 p-3 rounded-full hover:bg-rose-300 transition">
-                  <Twitter size={20} className="text-amber-900" />
+                  <span>🐦</span>
                 </a>
               </div>
             </div>
@@ -450,86 +457,27 @@ const EuphoricFlora = () => {
         </div>
       </footer>
 
+      {/* CART BUTTON */}
       {getTotalItems() > 0 && (
-        <button 
+        <button
           onClick={() => setShowCart(!showCart)}
-          className="fixed bottom-8 right-8 bg-rose-400 text-white p-4 rounded-full shadow-lg hover:bg-rose-500 transition"
+          className="fixed bottom-8 right-8 bg-rose-400 text-white p-4 rounded-full shadow-lg hover:bg-rose-500 transition relative"
         >
-          <ShoppingCart size={24} />
+          <span className="text-2xl">🛒</span>
           <span className="absolute -top-2 -right-2 bg-amber-900 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
             {getTotalItems()}
           </span>
         </button>
       )}
 
+      {/* CART SIDEBAR */}
       {showCart && (
         <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowCart(false)}>
-          <div 
+          <div
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-amber-900">Your Cart</h2>
-                <button onClick={() => setShowCart(false)} className="text-amber-900">
-                  <X size={24} />
-                </button>
-              </div>
-
-              {cart.length === 0 ? (
-                <p className="text-amber-800">Your cart is empty</p>
-              ) : (
-                <>
-                  <div className="space-y-4 mb-6">
-                    {cart.map(item => (
-                      <div key={item.id} className="flex items-center gap-4 p-4 bg-pink-50 rounded-lg">
-                        <span className="text-3xl">{item.icon}</span>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-amber-900">{item.name}</h3>
-                          <p className="text-amber-800">$ {item.price}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="p-1 bg-rose-200 rounded hover:bg-rose-300"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="w-8 text-center font-semibold">{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="p-1 bg-rose-200 rounded hover:bg-rose-300"
-                          >
-                            <Plus size={16} />
-                          </button>
-                          <button 
-                            onClick={() => removeFromCart(item.id)}
-                            className="p-1 bg-red-200 rounded hover:bg-red-300 ml-2"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-rose-200 pt-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xl font-bold text-amber-900">Total:</span>
-                      <span className="text-2xl font-bold text-amber-900">$ {getTotalPrice()}</span>
-                    </div>
-                    <button className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold">
-                      Checkout
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default EuphoricFlora;
+                <b
