@@ -65,13 +65,8 @@ function EuphoricFlora() {
     setCart(cart.filter(item => item.id !== id));
   };
 
-  const getTotalItems = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  };
-
-  const getTotalPrice = () => {
-    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  };
+  const getTotalItems = () => cart.reduce((sum, item) => sum + item.quantity, 0);
+  const getTotalPrice = () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -173,7 +168,7 @@ function EuphoricFlora() {
             </div>
             <div className="bg-white border-2 border-rose-200 rounded-lg p-6">
               <h3 className="font-bold text-amber-900 mb-2">How long will my flowers last?</h3>
-              <p className="text-amber-800">With proper care, most bouquets last 5-7 days.</p>
+              <p className="text-amber-800">With proper care, most bouquets last 5–7 days.</p>
             </div>
             <div className="bg-white border-2 border-rose-200 rounded-lg p-6">
               <h3 className="font-bold text-amber-900 mb-2">Can I customize my bouquet?</h3>
@@ -480,4 +475,63 @@ function EuphoricFlora() {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-amber-900">Your Cart</h2>
-                <b
+                <button onClick={() => setShowCart(false)} className="text-amber-900 text-2xl leading-none">
+                  ✕
+                </button>
+              </div>
+
+              {cart.length === 0 ? (
+                <p className="text-amber-800">Your cart is empty</p>
+              ) : (
+                <>
+                  <div className="space-y-4 mb-6">
+                    {cart.map(item => (
+                      <div key={item.id} className="flex items-center gap-4 p-4 bg-pink-50 rounded-lg">
+                        <span className="text-3xl">{item.icon}</span>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-amber-900">{item.name}</h3>
+                          <p className="text-amber-800">$ {item.price}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="p-1 bg-rose-200 rounded hover:bg-rose-300"
+                          >
+                            <span className="text-lg">−</span>
+                          </button>
+                          <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="p-1 bg-rose-200 rounded hover:bg-rose-300"
+                          >
+                            <span className="text-lg">+</span>
+                          </button>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="p-1 bg-red-200 rounded hover:bg-red-300 ml-2"
+                          >
+                            <span>🗑️</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-rose-200 pt-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-xl font-bold text-amber-900">Total:</span>
+                      <span className="text-2xl font-bold text-amber-900">$ {getTotalPrice()}</span>
+                    </div>
+                    <button className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold">
+                      Checkout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
