@@ -1,52 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Euphoric Flora</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #fbb6ce, #ffd59e);
-      color: white;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Euphoric Flora</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #fff;
+    color: #222;
+  }
+
+  /* NAVBAR */
+  header {
+    border-bottom: 1px solid #ccc;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-weight: bold;
+    font-size: 22px;
+  }
+  nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  /* HERO SECTION */
+  .hero {
+    padding: 40px 30px;
+  }
+  .hero h1 {
+    font-size: 40px;
+    margin-bottom: 5px;
+  }
+  .hero p {
+    margin-bottom: 20px;
+  }
+  .hero-buttons button {
+    padding: 12px 22px;
+    margin-right: 10px;
+    border: 1px solid #333;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  /* BEST SELLERS */
+  .best-sellers {
+    padding: 40px 30px;
+  }
+  .best-sellers h2 {
+    margin-bottom: 20px;
+  }
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .product {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: center;
+  }
+  .product-box {
+    border: 1px dashed #aaa;
+    height: 120px;
+    margin-bottom: 10px;
+  }
+
+  /* SIDEBAR FLOWERS LIST */
+  .layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    padding: 0 30px;
+    gap: 30px;
+  }
+  .flowers-list h3 {
+    margin-bottom: 15px;
+  }
+  .flowers-list div {
+    margin-bottom: 12px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid #ccc;
+    padding: 20px 30px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 15px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    header {
+      padding: 12px 20px;
+    }
+
+    nav {
+      display: none;
+    }
+
+    .menu-btn {
+      display: block;
+    }
+
+    .layout {
+      grid-template-columns: 1fr;
+    }
+
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    footer {
+      flex-direction: column;
       text-align: center;
-      padding: 80px 20px;
     }
-    h1 {
-      font-size: 60px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    p {
-      font-size: 22px;
-      max-width: 900px;
-      margin: auto;
-      line-height: 1.6;
-    }
-    .btn {
-      margin-top: 40px;
-      display: inline-block;
-      padding: 14px 28px;
-      background: white;
-      color: #b45309;
-      border-radius: 10px;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 20px;
-    }
-  </style>
+  }
+</style>
 </head>
+
 <body>
 
-  <h1>Welcome to our E-commerce Project</h1>
+<!-- NAVBAR -->
+<header>
+  <div class="logo">🌸 Euphoric Flora</div>
 
-  <p>
-    We are <b>Euphoric Flora</b> — your go-to destination for flowers that speak louder than words.
-    Whether it’s a last-minute surprise or a moment you want to make unforgettable, we’re here to help you
-    impress your partner with elegance, beauty, and effortless charm.
-  </p>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Store</a>
+    <a href="#">About</a>
+    <a href="#">FAQ</a>
+    <a href="#">Profile</a>
+    <a href="#">Login</a>
+  </nav>
+</header>
 
-  <a class="btn" href="#">Shop Now</a>
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- LEFT SECTION -->
+  <div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <h1>Say it with Flowers.</h1>
+      <p>Same-day delivery in your city.</p>
+
+      <div class="hero-buttons">
+        <button>Shop All Flowers</button>
+        <button>Build Your Own Bouquet</button>
+      </div>
+    </section>
+
+    <!-- BEST SELLERS -->
+    <section class="best-sellers">
+      <h2>Best Sellers</h2>
+
+      <div class="product-grid">
+        <div class="product">
+          <div class="product-box"></div>
+          <p>Birthday</p>
+          <p>$ • Quick</p>
+        </div>
+
+        <div class="product">
+          <div class="product-box"></div>
+          <p>Anniversary</p>
+          <p>$ • Quick</p>
+        </div>
+
+        <div class="product">
+          <div class="product-box"></div>
+          <p>I'm Sorry</p>
+          <p>$ • Quick</p>
+        </div>
+
+        <div class="product">
+          <div class="product-box"></div>
+          <p>Just Because</p>
+          <p>$ • Quick</p>
+        </div>
+      </div>
+
+      <p style="margin-top: 20px;">★★★★★ “Perfect bouquet, arrived fresh.”</p>
+    </section>
+
+  </div>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="flowers-list">
+    <h3>Flowers & Meanings</h3>
+    <div>🌹 <b>Roses</b><br><small>Love, passion, romance</small></div>
+    <div>🌼 <b>Daisies</b><br><small>Cheerfulness, innocence</small></div>
+    <div>🌷 <b>Tulips</b><br><small>Caring love</small></div>
+    <div>🌻 <b>Sunflowers</b><br><small>Joy, admiration</small></div>
+    <hr style="margin: 20px 0;">
+    <p>Contact</p>
+    <p>Shipping</p>
+    <p>Returns</p>
+    <p>Privacy</p>
+  </aside>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Contact</span>
+  <span>Shipping</span>
+  <span>Returns</span>
+  <span>Privacy</span>
+</footer>
 
 </body>
 </html>
