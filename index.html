@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Euphoric Flora</title>
 
-  <!-- Tailwind via CDN for all the utility classes you used -->
+  <!-- Tailwind via CDN for all the utility classes in the JSX -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- (Optional) Your own extra CSS file if you want -->
+  <!-- Optional: your own extra styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -16,17 +16,17 @@
   <!-- React will render into this -->
   <div id="root"></div>
 
-  <!-- React & ReactDOM (UMD) -->
+  <!-- React & ReactDOM (UMD builds) -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
-  <!-- Babel to compile JSX in the browser -->
+  <!-- Babel compiles JSX in the browser -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- Your React code -->
+  <!-- Your React app code -->
   <script type="text/babel" src="euphoric-flora.jsx"></script>
 
-  <!-- Mount the app -->
+  <!-- Mount the React component -->
   <script type="text/babel">
     const rootElement = document.getElementById('root');
     const root = ReactDOM.createRoot(rootElement);
