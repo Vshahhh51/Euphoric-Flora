@@ -2,11 +2,18 @@
 
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files
+app.use(express.static(__dirname));
 
 let nextId = 4;
 let colors = [
@@ -68,4 +75,22 @@ app.patch("/api/colors/:id", (req, res) => {
   const { name, hex } = req.body ?? {};
   if (hex && !isHex(hex))
     return res.status(400).json({ error: "hex must be 6-digit" });
+
+  if (name) color.name = name;
+  if (hex) color.hex = normHex(hex);
+  res.json(color);
+});
+
+app.delete("/api/colors/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const idx = colors.findIndex((c) => c.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Color not found" });
+
+  colors.splice(idx, 1);
+  res.status(204).end();
+});
+
+const PORT = 5000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
