@@ -696,129 +696,71 @@ function EuphoricFlora() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-      {/* HEADER */}
-      <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-amber-900">
-              Euphoric-Flora
-            </h1>
+  <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
 
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-amber-900 bg-rose-200 p-2 rounded-lg"
-            >
-              <span className="text-xl">{mobileMenuOpen ? "✕" : "☰"}</span>
-            </button>
-          </div>
+  {/* FULL-WIDTH FLEX → ALWAYS LEFT/RIGHT */}
+  <div className="w-full flex items-center justify-between max-w-7xl mx-auto px-4 py-2">
 
-          <nav className="flex flex-wrap items-center gap-4 text-amber-900 text-sm md:text-base">
-            <button
-              onClick={() => handleNavClick("home")}
-              className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => handleNavClick("store")}
-              className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg"
-            >
-              Store
-            </button>
-            <button
-              onClick={() => handleNavClick("about")}
-              className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg"
-            >
-              About
-            </button>
-            <button
-              onClick={() => handleNavClick("faqs")}
-              className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg"
-            >
-              FAQs
-            </button>
-            {isLoggedIn ? (
-              <button
-                onClick={() => handleNavClick("profile")}
-                className="hover:text-amber-700 transition flex items-center gap-2 font-medium px-3 py-2 bg-rose-100 rounded-lg"
-              >
-                <span>👤</span>
-                Profile
-              </button>
-            ) : (
-              <button
-                onClick={() => handleNavClick("login")}
-                className="hover:text-amber-700 transition font-medium px-3 py-2 bg-rose-100 rounded-lg"
-              >
-                Login
-              </button>
-            )}
-          </nav>
+    {/* LEFT — LOGO */}
+    <h1
+      onClick={() => handleNavClick("home")}
+      className="text-2xl font-bold text-amber-900 cursor-pointer text-left"
+    >
+      Euphoric-Flora
+    </h1>
 
-          {currentPage === "home" && (
-            <div className="mt-4 relative">
-              <input
-                type="text"
-                placeholder="Search flowers, colors..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-rose-200 bg-white/80 focus:outline-none focus:border-rose-300"
-              />
-              <span className="absolute left-4 top-3.5 text-gray-400 text-lg">
-                🔍
-              </span>
-            </div>
-          )}
-        </div>
+    {/* RIGHT — NAV */}
+    <nav className="flex items-center gap-4 text-amber-900 text-sm">
 
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-pink-100 border-t border-rose-200 py-4">
-            <nav className="flex flex-col space-y-3 px-4 text-amber-900">
-              <button
-                onClick={() => handleNavClick("home")}
-                className="text-left hover:text-amber-700 transition"
-              >
-                Home
-              </button>
-              <button
-                onClick={() => handleNavClick("store")}
-                className="text-left hover:text-amber-700 transition"
-              >
-                Store
-              </button>
-              <button
-                onClick={() => handleNavClick("about")}
-                className="text-left hover:text-amber-700 transition"
-              >
-                About
-              </button>
-              <button
-                onClick={() => handleNavClick("faqs")}
-                className="text-left hover:text-amber-700 transition"
-              >
-                FAQs
-              </button>
-              {isLoggedIn ? (
-                <button
-                  onClick={() => handleNavClick("profile")}
-                  className="text-left hover:text-amber-700 transition"
-                >
-                  Profile
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleNavClick("login")}
-                  className="text-left hover:text-amber-700 transition"
-                >
-                  Login
-                </button>
-              )}
-            </nav>
-          </div>
-        )}
-      </header>
+      <button onClick={() => handleNavClick("home")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
+        Home
+      </button>
 
-      {/* MAIN CONTENT */}
+      <button onClick={() => handleNavClick("store")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
+        Store
+      </button>
+
+      <button onClick={() => handleNavClick("about")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
+        About
+      </button>
+
+      <button onClick={() => handleNavClick("faqs")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
+        FAQs
+      </button>
+
+      {isLoggedIn ? (
+        <button onClick={() => handleNavClick("profile")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 flex items-center gap-1">
+          👤 Profile
+        </button>
+      ) : (
+        <button onClick={() => handleNavClick("login")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200">
+          Login
+        </button>
+      )}
+
+    </nav>
+
+  </div>
+</header>
+
+
+{currentPage === "home" && (
+  <div className="bg-pink-50 py-3 shadow-sm">
+    <div className="max-w-7xl mx-auto px-4 relative">
+      <input
+        type="text"
+        placeholder="Search flowers, colors..."
+        value={searchQuery}
+        onChange={(e) => handleSearch(e.target.value)}
+        className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-rose-200 bg-white focus:outline-none focus:border-rose-300"
+      />
+      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+        🔍
+      </span>
+    </div>
+  </div>
+)}
+
       {renderPage()}
 
       {/* FOOTER */}
