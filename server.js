@@ -9,8 +9,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const frontendPath = path.join(__dirname, "..", "docs");
-app.use(express.static(frontendPath));
+app.use(express.static(__dirname));
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -62,7 +61,7 @@ app.post("/api/users", async (req, res) => {
 });
 
 app.use((req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 initDb().then(() => {
