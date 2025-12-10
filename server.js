@@ -1,96 +1,71 @@
-//vatsal
-
-import express from "express";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require("express");
+const cors = require("cors");
+const { Pool } = require("pg");
+const path = require("path");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(cors());
 app.use(express.json());
 
-// Serve static files
 app.use(express.static(__dirname));
 
-let nextId = 4;
-let colors = [
-  { id: 1, name: "red", hex: "#ff0000" },
-  { id: 2, name: "green", hex: "#00ff00" },
-  { id: 3, name: "blue", hex: "#0000ff" },
-];
-
-
-const isHex = (s) => /^#?[0-9a-fA-F]{6}$/.test(s);
-const normHex = (s) => (s.startsWith("#") ? s.toLowerCase() : "#" + s.toLowerCase());
-
-
-app.get("/api/colors", (req, res) => {
-  res.json(colors);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
+async function initDb() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log("Database initialized - users table ready");
+  } catch (err) {
+    console.error("Error initializing database:", err);
+  }
+}
 
-app.get("/api/colors/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const color = colors.find((c) => c.id === id);
-  if (!color) return res.status(404).json({ error: "Color not found" });
-  res.json(color);
+app.get("/api/users", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
 });
 
+app.post("/api/users", async (req, res) => {
+  const { name, email } = req.body;
+  
+  if (!name || !email) {
+    return res.status(400).json({ error: "Name and email are required" });
+  }
 
-app.post("/api/colors", (req, res) => {
-  const { name, hex } = req.body ?? {};
-  if (!name || !hex || !isHex(hex))
-    return res.status(400).json({ error: "Required: name, hex(6-digit)" });
-
-  if (colors.some((c) => c.name.toLowerCase() === name.toLowerCase()))
-    return res.status(409).json({ error: "Color name already exists" });
-
-  const color = { id: nextId++, name, hex: normHex(hex) };
-  colors.push(color);
-  res.status(201).json(color);
+  try {
+    const result = await pool.query(
+      "INSERT INTO users (name, email) VALUES ($1, $2) ON CONFLICT (email) DO UPDATE SET name = $1 RETURNING *",
+      [name, email]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error saving user:", err);
+    res.status(500).json({ error: "Failed to save user" });
+  }
 });
 
-
-app.put("/api/colors/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const idx = colors.findIndex((c) => c.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Color not found" });
-
-  const { name, hex } = req.body ?? {};
-  if (!name || !hex || !isHex(hex))
-    return res.status(400).json({ error: "Required: name, hex(6-digit)" });
-
-  colors[idx] = { id, name, hex: normHex(hex) };
-  res.json(colors[idx]);
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-app.patch("/api/colors/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const color = colors.find((c) => c.id === id);
-  if (!color) return res.status(404).json({ error: "Color not found" });
-
-  const { name, hex } = req.body ?? {};
-  if (hex && !isHex(hex))
-    return res.status(400).json({ error: "hex must be 6-digit" });
-
-  if (name) color.name = name;
-  if (hex) color.hex = normHex(hex);
-  res.json(color);
-});
-
-app.delete("/api/colors/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const idx = colors.findIndex((c) => c.id === id);
-  if (idx === -1) return res.status(404).json({ error: "Color not found" });
-
-  colors.splice(idx, 1);
-  res.status(204).end();
-});
-
-const PORT = 5000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+initDb().then(() => {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
+  });
 });

@@ -1,3 +1,5 @@
+
+
 modules = ["nodejs-20", "web"]
 [agent]
 expertMode = true
@@ -30,13 +32,21 @@ waitForPort = 5000
 outputType = "webview"
 
 [[ports]]
+localPort = 2222
+externalPort = 3000
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 39845
-externalPort = 3000
+localPort = 41659
+externalPort = 3001
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["node", "server.js"]
+
+run = "npm start"
+
+[env]
+PORT = "5000"
