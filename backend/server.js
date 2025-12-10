@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(__dirname));
+const frontendPath = path.join(__dirname, "..", "frontend");
+app.use(express.static(frontendPath));
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -61,7 +62,7 @@ app.post("/api/users", async (req, res) => {
 });
 
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 initDb().then(() => {
@@ -69,3 +70,4 @@ initDb().then(() => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
 });
+
