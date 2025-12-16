@@ -1,10 +1,3 @@
-import React from "react";
-import {
-  loginWithGoogle,
-  loginWithGithub,
-  firebaseSignOut,
-} from "./firebase"; // if both files are in src/
-
 function EuphoricFlora() {
   const [cart, setCart] = React.useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -237,7 +230,7 @@ function EuphoricFlora() {
     }
   };
 
-  // Social login: Google / GitHub via Firebase
+  // Social login: Google / GitHub via Firebase
   const handleSocialLogin = async (provider) => {
     try {
       let result;
