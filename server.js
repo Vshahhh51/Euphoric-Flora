@@ -81,19 +81,6 @@ app.post("/api/users", (req, res) => {
   });
 });
 
-// ---- Firebase Config Endpoint ----
-app.get("/api/firebase-config", (req, res) => {
-  res.json({
-    apiKey: process.env.FIREBASE_API_KEY || "",
-    authDomain: "react-auth-85339.firebaseapp.com",
-    projectId: "react-auth-85339",
-    storageBucket: "react-auth-85339.firebasestorage.app",
-    messagingSenderId: "827053231900",
-    appId: "1:827053231900:web:1805bc81a23504229674d9",
-    measurementId: "G-W8QR2WDWNT"
-  });
-});
-
 // ---- SEND FRONTEND ----
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
