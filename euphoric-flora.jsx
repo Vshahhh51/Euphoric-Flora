@@ -254,7 +254,15 @@ function EuphoricFlora() {
       setCurrentPage("profile");
     } catch (err) {
       console.error("Social login error:", err);
-      alert("Login failed, check console for details.");
+      let errorMessage = err.message || "Unknown error";
+      if (err.code === "auth/unauthorized-domain") {
+        errorMessage = "This domain is not authorized in Firebase. Please add your Replit domain to Firebase Console > Authentication > Settings > Authorized domains.";
+      } else if (err.code === "auth/popup-blocked") {
+        errorMessage = "Popup was blocked. Please allow popups for this site and try again.";
+      } else if (err.code === "auth/popup-closed-by-user") {
+        errorMessage = "Login cancelled.";
+      }
+      alert("Login failed: " + errorMessage);
     }
   };
 
