@@ -1,16 +1,15 @@
-const { useState, useEffect } = React;
-
 function EuphoricFlora() {
-  const [cart, setCart] = useState([]);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showCart, setShowCart] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPage, setCurrentPage] = useState("home");
+  const [cart, setCart] = React.useState([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [showCart, setShowCart] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState("home");
+  const [currentUser, setCurrentUser] = React.useState({ name: "", email: "" });
 
   // NEW: DB-related state
-  const [dbUsers, setDbUsers] = useState([]);
-  const [dbStatus, setDbStatus] = useState("");
+  const [dbUsers, setDbUsers] = React.useState([]);
+  const [dbStatus, setDbStatus] = React.useState("");
 
   const allProducts = [
     {
@@ -141,8 +140,8 @@ function EuphoricFlora() {
     },
   ];
 
-  const [displayedProducts, setDisplayedProducts] = useState(
-    allProducts.slice(10, 14),
+  const [displayedProducts, setDisplayedProducts] = React.useState(
+    allProducts.slice(10, 14)
   );
 
   const flowers = [
@@ -184,6 +183,7 @@ function EuphoricFlora() {
     },
   ];
 
+
   // === DB HELPERS ===
 
   const fetchUsersFromDb = () => {
@@ -207,6 +207,7 @@ function EuphoricFlora() {
         setDbStatus("Error loading users from database");
       });
   };
+
   const saveUserToDb = async (name, email) => {
     try {
       setDbStatus("Saving user...");
@@ -229,10 +230,32 @@ function EuphoricFlora() {
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    console.log(`Logging in with ${provider}...`);
-    setIsLoggedIn(true);
-    setCurrentPage("profile");
+  // Social login: Google / GitHub via Firebase
+  const handleSocialLogin = async (provider) => {
+    try {
+      let result;
+
+      if (provider === "Google") {
+        result = await loginWithGoogle();
+      } else if (provider === "GitHub") {
+        result = await loginWithGithub();
+      } else {
+        throw new Error("Unknown provider: " + provider);
+      }
+
+      const user = result.user;
+      const name = user.displayName || "";
+      const email = user.email || "";
+
+      setCurrentUser({ name, email });
+      await saveUserToDb(name, email);
+
+      setIsLoggedIn(true);
+      setCurrentPage("profile");
+    } catch (err) {
+      console.error("Social login error:", err);
+      alert("Login failed, check console for details.");
+    }
   };
 
   // UPDATED: email signup now saves to DB
@@ -244,11 +267,13 @@ function EuphoricFlora() {
 
     if (name && email) {
       await saveUserToDb(name, email);
+      setCurrentUser({ name, email });
     }
 
     setIsLoggedIn(true);
     setCurrentPage("profile");
   };
+
   const addToCart = (product) => {
     const existingItem = cart.find((item) => item.id === product.id);
     if (existingItem) {
@@ -256,8 +281,8 @@ function EuphoricFlora() {
         cart.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        ),
+            : item
+        )
       );
     } else {
       setCart([...cart, { ...product, quantity: 1 }]);
@@ -270,9 +295,9 @@ function EuphoricFlora() {
         .map((item) =>
           item.id === id
             ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item,
+            : item
         )
-        .filter((item) => item.quantity > 0),
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -298,17 +323,17 @@ function EuphoricFlora() {
         product.name.toLowerCase().includes(searchLower) ||
         product.category.toLowerCase().includes(searchLower) ||
         product.color.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower),
+        product.description.toLowerCase().includes(searchLower)
     );
 
     setDisplayedProducts(
-      filtered.length > 0 ? filtered : allProducts.slice(10, 14),
+      filtered.length > 0 ? filtered : allProducts.slice(10, 14)
     );
   };
 
   const filterByCategory = (category) => {
     const filtered = allProducts.filter(
-      (product) => product.category === category,
+      (product) => product.category === category
     );
     setDisplayedProducts(filtered);
     setSearchQuery("");
@@ -331,11 +356,12 @@ function EuphoricFlora() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setCurrentUser({ name: "", email: "" });
     setCurrentPage("home");
   };
 
   // When user is logged in and on profile page, load users from DB
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentPage === "profile" && isLoggedIn) {
       fetchUsersFromDb();
     }
@@ -442,9 +468,11 @@ function EuphoricFlora() {
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-amber-900">
-                  Welcome back!
+                  Welcome back, {currentUser.name || "User"}!
                 </h3>
-                <p className="text-amber-800">user@example.com</p>
+                <p className="text-amber-800">
+                  {currentUser.email || "No email provided"}
+                </p>
               </div>
             </div>
             <button
@@ -531,7 +559,7 @@ function EuphoricFlora() {
                 </label>
                 <input
                   type="text"
-                  name="name" // NEW
+                  name="name"
                   className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-300"
                   placeholder="Your name"
                   required
@@ -544,7 +572,7 @@ function EuphoricFlora() {
                 </label>
                 <input
                   type="email"
-                  name="email" // NEW
+                  name="email"
                   className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-300"
                   placeholder="you@example.com"
                   required
@@ -557,7 +585,7 @@ function EuphoricFlora() {
                 </label>
                 <input
                   type="password"
-                  name="password" // optional, just for completeness
+                  name="password"
                   className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-300"
                   placeholder="Create a password"
                   required
@@ -612,7 +640,7 @@ function EuphoricFlora() {
                 <button
                   onClick={() => {
                     const justBecause = allProducts.find(
-                      (p) => p.name === "Just Because",
+                      (p) => p.name === "Just Because"
                     );
                     if (justBecause) setDisplayedProducts([justBecause]);
                   }}
@@ -696,70 +724,82 @@ function EuphoricFlora() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
-  <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
+      <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
+        {/* FULL-WIDTH FLEX → ALWAYS LEFT/RIGHT */}
+        <div className="w-full flex items-center justify-between max-w-7xl mx-auto px-4 py-2">
+          {/* LEFT — LOGO */}
+          <h1
+            onClick={() => handleNavClick("home")}
+            className="text-2xl font-bold text-amber-900 cursor-pointer text-left"
+          >
+            Euphoric-Flora
+          </h1>
 
-  {/* FULL-WIDTH FLEX → ALWAYS LEFT/RIGHT */}
-  <div className="w-full flex items-center justify-between max-w-7xl mx-auto px-4 py-2">
+          {/* RIGHT — NAV */}
+          <nav className="flex items-center gap-4 text-amber-900 text-sm">
+            <button
+              onClick={() => handleNavClick("home")}
+              className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition"
+            >
+              Home
+            </button>
 
-    {/* LEFT — LOGO */}
-    <h1
-      onClick={() => handleNavClick("home")}
-      className="text-2xl font-bold text-amber-900 cursor-pointer text-left"
-    >
-      Euphoric-Flora
-    </h1>
+            <button
+              onClick={() => handleNavClick("store")}
+              className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition"
+            >
+              Store
+            </button>
 
-    {/* RIGHT — NAV */}
-    <nav className="flex items-center gap-4 text-amber-900 text-sm">
+            <button
+              onClick={() => handleNavClick("about")}
+              className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition"
+            >
+              About
+            </button>
 
-      <button onClick={() => handleNavClick("home")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
-        Home
-      </button>
+            <button
+              onClick={() => handleNavClick("faqs")}
+              className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition"
+            >
+              FAQs
+            </button>
 
-      <button onClick={() => handleNavClick("store")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
-        Store
-      </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => handleNavClick("profile")}
+                className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 flex items-center gap-1"
+              >
+                👤 Profile
+              </button>
+            ) : (
+              <button
+                onClick={() => handleNavClick("login")}
+                className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200"
+              >
+                Login
+              </button>
+            )}
+          </nav>
+        </div>
+      </header>
 
-      <button onClick={() => handleNavClick("about")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
-        About
-      </button>
-
-      <button onClick={() => handleNavClick("faqs")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition">
-        FAQs
-      </button>
-
-      {isLoggedIn ? (
-        <button onClick={() => handleNavClick("profile")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 flex items-center gap-1">
-          👤 Profile
-        </button>
-      ) : (
-        <button onClick={() => handleNavClick("login")} className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200">
-          Login
-        </button>
+      {currentPage === "home" && (
+        <div className="bg-pink-50 py-3 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 relative">
+            <input
+              type="text"
+              placeholder="Search flowers, colors..."
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-rose-200 bg-white focus:outline-none focus:border-rose-300"
+            />
+            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
+              🔍
+            </span>
+          </div>
+        </div>
       )}
-
-    </nav>
-
-  </div>
-</header>
-
-
-{currentPage === "home" && (
-  <div className="bg-pink-50 py-3 shadow-sm">
-    <div className="max-w-7xl mx-auto px-4 relative">
-      <input
-        type="text"
-        placeholder="Search flowers, colors..."
-        value={searchQuery}
-        onChange={(e) => handleSearch(e.target.value)}
-        className="w-full px-4 py-3 pl-12 rounded-lg border-2 border-rose-200 bg-white focus:outline-none focus:border-rose-300"
-      />
-      <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg">
-        🔍
-      </span>
-    </div>
-  </div>
-)}
 
       {renderPage()}
 
@@ -844,7 +884,7 @@ function EuphoricFlora() {
       {getTotalItems() > 0 && (
         <button
           onClick={() => setShowCart(!showCart)}
-          className="fixed bottom-8 right-8 bg-rose-400 text-white p-4 rounded-full shadow-lg hover:bg-rose-500 transition relative"
+          className="fixed bottom-8 right-8 z-40 bg-rose-400 text-white p-4 rounded-full shadow-lg hover:bg-rose-500 transition"
         >
           <span className="text-2xl">🛒</span>
           <span className="absolute -top-2 -right-2 bg-amber-900 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">
@@ -865,7 +905,9 @@ function EuphoricFlora() {
           >
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-amber-900">Your Cart</h2>
+                <h2 className="text-2xl font-bold text-amber-900">
+                  Your Cart
+                </h2>
                 <button
                   onClick={() => setShowCart(false)}
                   className="text-amber-900 text-2xl leading-none"
