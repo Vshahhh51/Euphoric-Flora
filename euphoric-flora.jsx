@@ -354,7 +354,12 @@ function EuphoricFlora() {
     setCurrentPage("home");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await firebaseSignOut();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
     setIsLoggedIn(false);
     setCurrentUser({ name: "", email: "" });
     setCurrentPage("home");

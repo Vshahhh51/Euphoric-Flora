@@ -15,6 +15,58 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+  <!-- Firebase Configuration -->
+  <script>
+    let auth, googleProvider, githubProvider;
+    let firebaseReady = false;
+
+    async function initFirebase() {
+      try {
+        const response = await fetch('/api/firebase-config');
+        const firebaseConfig = await response.json();
+        
+        if (!firebaseConfig.apiKey) {
+          console.warn('Firebase API key not configured');
+          return;
+        }
+
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        googleProvider = new firebase.auth.GoogleAuthProvider();
+        githubProvider = new firebase.auth.GithubAuthProvider();
+        firebaseReady = true;
+        console.log('Firebase initialized successfully');
+      } catch (err) {
+        console.error('Failed to initialize Firebase:', err);
+      }
+    }
+
+    function loginWithGoogle() {
+      if (!firebaseReady) {
+        return Promise.reject(new Error('Firebase not initialized. Please add FIREBASE_API_KEY.'));
+      }
+      return auth.signInWithPopup(googleProvider);
+    }
+
+    function loginWithGithub() {
+      if (!firebaseReady) {
+        return Promise.reject(new Error('Firebase not initialized. Please add FIREBASE_API_KEY.'));
+      }
+      return auth.signInWithPopup(githubProvider);
+    }
+
+    function firebaseSignOut() {
+      if (!firebaseReady) return Promise.resolve();
+      return auth.signOut();
+    }
+
+    initFirebase();
+  </script>
+
   <script type="text/babel" src="euphoric-flora.jsx"></script>
 
   <script type="text/babel">
