@@ -638,7 +638,7 @@ function EuphoricFlora() {
 
               <div className="rounded-lg mb-6 overflow-hidden">
                 <img 
-                  src="attached_assets/Flower_1765931983501.png" 
+                  src="attached_assets/Flower.png" 
                   alt="Featured Arrangement" 
                   className="w-full h-48 object-cover object-center"
                 />
@@ -646,7 +646,7 @@ function EuphoricFlora() {
 
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={showAllFlowers}
+                  onClick={showAllFflowers}
                   className="px-6 py-3 bg-white border-2 border-amber-900 text-amber-900 rounded-lg hover:bg-amber-50 transition font-medium"
                 >
                   Shop All Flowers
