@@ -1,9 +1,3 @@
-import {
-  loginWithGoogle,
-  loginWithGithub,
-  firebaseSignOut,
-} from "./FirebaseConfig";
-
 function EuphoricFlora() {
   const [cart, setCart] = React.useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -646,7 +640,7 @@ function EuphoricFlora() {
 
               <div className="flex flex-wrap gap-4">
                 <button
-                  onClick={showAllFflowers}
+                  onClick={showAllFlowers}
                   className="px-6 py-3 bg-white border-2 border-amber-900 text-amber-900 rounded-lg hover:bg-amber-50 transition font-medium"
                 >
                   Shop All Flowers
