@@ -1,3 +1,9 @@
+import {
+  loginWithGoogle,
+  loginWithGithub,
+  firebaseSignOut,
+} from "./FirebaseConfig";
+
 function EuphoricFlora() {
   const [cart, setCart] = React.useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
