@@ -630,11 +630,11 @@ function EuphoricFlora() {
                 Same-day delivery in your city.
               </p>
 
-              <div className="rounded-lg mb-6 overflow-hidden">
+              <div className="rounded-xl mb-6 overflow-hidden shadow-lg border-2 border-rose-200">
                 <img 
-                  src="attached_assets/Flower.png" 
+                  src="attached_assets/flowers_1765934753123.jpeg" 
                   alt="Featured Arrangement" 
-                  className="w-full h-48 object-cover object-center"
+                  className="w-full h-64 md:h-80 object-cover object-center"
                 />
               </div>
 
