@@ -6,6 +6,8 @@ function EuphoricFlora() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState("home");
   const [currentUser, setCurrentUser] = React.useState({ name: "", email: "" });
+  const [showCheckout, setShowCheckout] = React.useState(false);
+  const [showThankYou, setShowThankYou] = React.useState(false);
 
   // NEW: DB-related state
   const [dbUsers, setDbUsers] = React.useState([]);
@@ -1044,12 +1046,145 @@ function EuphoricFlora() {
                         $ {getTotalPrice()}
                       </span>
                     </div>
-                    <button className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold">
+                    <button 
+                      onClick={() => {
+                        setShowCart(false);
+                        setShowCheckout(true);
+                      }}
+                      className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold"
+                    >
                       Checkout
                     </button>
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CHECKOUT MODAL */}
+      {showCheckout && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowCheckout(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-rose-100 px-6 py-4 border-b border-rose-200">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-amber-900">Checkout</h2>
+                <button
+                  onClick={() => setShowCheckout(false)}
+                  className="text-amber-900 text-2xl leading-none hover:text-amber-700"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            
+            <form 
+              className="p-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShowCheckout(false);
+                setCart([]);
+                setShowThankYou(true);
+              }}
+            >
+              <div>
+                <label className="block text-amber-900 mb-2 font-semibold">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                  placeholder="Your full name"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-amber-900 mb-2 font-semibold">Phone Number</label>
+                <input
+                  type="tel"
+                  required
+                  className="w-full px-4 py-3 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                  placeholder="Your phone number"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-amber-900 mb-2 font-semibold">Delivery Address</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-4 py-3 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                  placeholder="Street address"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">City</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-4 py-3 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="City"
+                  />
+                </div>
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">ZIP Code</label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-4 py-3 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="ZIP"
+                  />
+                </div>
+              </div>
+              
+              <div className="border-t border-rose-200 pt-4 mt-4">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-lg font-semibold text-amber-900">Order Total:</span>
+                  <span className="text-2xl font-bold text-amber-900">$ {getTotalPrice()}</span>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold text-lg"
+                >
+                  Place Order
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* THANK YOU MODAL */}
+      {showThankYou && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowThankYou(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl w-full max-w-sm text-center overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-gradient-to-br from-rose-100 to-pink-100 px-8 py-10">
+              <div className="text-6xl mb-4">💐</div>
+              <h2 className="text-3xl font-bold text-amber-900 mb-2">Thank You!</h2>
+              <p className="text-amber-800 text-lg mb-2">Your order has been placed.</p>
+              <p className="text-amber-700">We'll deliver your beautiful flowers soon!</p>
+            </div>
+            <div className="p-6">
+              <button
+                onClick={() => setShowThankYou(false)}
+                className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold"
+              >
+                Continue Shopping
+              </button>
             </div>
           </div>
         </div>
