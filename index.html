@@ -24,16 +24,18 @@
     let auth, googleProvider, githubProvider;
     let firebaseReady = false;
 
-    async function initFirebase() {
-      try {
-        const response = await fetch('/api/firebase-config');
-        const firebaseConfig = await response.json();
-        
-        if (!firebaseConfig.apiKey) {
-          console.warn('Firebase API key not configured');
-          return;
-        }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTBUr0101DBV950FZCLhNzhItfj5odEwI",
+      authDomain: "react-auth-85339.firebaseapp.com",
+      projectId: "react-auth-85339",
+      storageBucket: "react-auth-85339.firebasestorage.app",
+      messagingSenderId: "827053231900",
+      appId: "1:827053231900:web:1805bc81a23504229674d9",
+      measurementId: "G-W8QR2WDWNT"
+    };
 
+    function initFirebase() {
+      try {
         firebase.initializeApp(firebaseConfig);
         auth = firebase.auth();
         googleProvider = new firebase.auth.GoogleAuthProvider();
@@ -47,14 +49,14 @@
 
     function loginWithGoogle() {
       if (!firebaseReady) {
-        return Promise.reject(new Error('Firebase not initialized. Please add FIREBASE_API_KEY.'));
+        return Promise.reject(new Error('Firebase not initialized.'));
       }
       return auth.signInWithPopup(googleProvider);
     }
 
     function loginWithGithub() {
       if (!firebaseReady) {
-        return Promise.reject(new Error('Firebase not initialized. Please add FIREBASE_API_KEY.'));
+        return Promise.reject(new Error('Firebase not initialized.'));
       }
       return auth.signInWithPopup(githubProvider);
     }
