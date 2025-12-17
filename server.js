@@ -83,8 +83,12 @@ app.post("/api/users", (req, res) => {
 
 // ---- Firebase Config ----
 app.get("/api/firebase-config", (req, res) => {
+  // Strip any quotes from the API key
+  let apiKey = process.env.FIREBASE_API_KEY || "";
+  apiKey = apiKey.replace(/^["']|["']$/g, "");
+  
   res.json({
-    apiKey: process.env.FIREBASE_API_KEY || "",
+    apiKey: apiKey,
     authDomain: "react-auth-85339.firebaseapp.com",
     projectId: "react-auth-85339",
     storageBucket: "react-auth-85339.firebasestorage.app",
