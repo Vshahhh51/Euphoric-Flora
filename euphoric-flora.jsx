@@ -739,7 +739,6 @@ function EuphoricFlora() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
       <header className="bg-pink-100/80 backdrop-blur-sm border-b border-rose-200 sticky top-0 z-50">
-        {/* FULL-WIDTH FLEX → ALWAYS LEFT/RIGHT */}
         <div className="w-full flex items-center justify-between max-w-7xl mx-auto px-4 py-2">
           {/* LEFT — LOGO */}
           <h1
@@ -749,8 +748,19 @@ function EuphoricFlora() {
             Euphoric-Flora
           </h1>
 
-          {/* RIGHT — NAV */}
-          <nav className="flex items-center gap-4 text-amber-900 text-sm">
+          {/* HAMBURGER BUTTON — MOBILE ONLY */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-rose-100 hover:bg-rose-200 transition"
+            aria-label="Toggle menu"
+          >
+            <span className={`block w-5 h-0.5 bg-amber-900 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></span>
+            <span className={`block w-5 h-0.5 bg-amber-900 my-1 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+            <span className={`block w-5 h-0.5 bg-amber-900 transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></span>
+          </button>
+
+          {/* DESKTOP NAV — HIDDEN ON MOBILE */}
+          <nav className="hidden md:flex items-center gap-4 text-amber-900 text-sm">
             <button
               onClick={() => handleNavClick("home")}
               className="px-3 py-1 bg-rose-100 rounded-lg hover:bg-rose-200 transition"
@@ -796,6 +806,57 @@ function EuphoricFlora() {
             )}
           </nav>
         </div>
+
+        {/* MOBILE MENU DROPDOWN */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-pink-50 border-t border-rose-200 px-4 py-4">
+            <nav className="flex flex-col gap-2 text-amber-900">
+              <button
+                onClick={() => handleNavClick("home")}
+                className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium"
+              >
+                Home
+              </button>
+
+              <button
+                onClick={() => handleNavClick("store")}
+                className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium"
+              >
+                Store
+              </button>
+
+              <button
+                onClick={() => handleNavClick("about")}
+                className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium"
+              >
+                About
+              </button>
+
+              <button
+                onClick={() => handleNavClick("faqs")}
+                className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium"
+              >
+                FAQs
+              </button>
+
+              {isLoggedIn ? (
+                <button
+                  onClick={() => handleNavClick("profile")}
+                  className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium flex items-center gap-2"
+                >
+                  👤 Profile
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleNavClick("login")}
+                  className="w-full text-left px-4 py-3 bg-rose-100 rounded-lg hover:bg-rose-200 transition font-medium"
+                >
+                  Login
+                </button>
+              )}
+            </nav>
+          </div>
+        )}
       </header>
 
       {currentPage === "home" && (
