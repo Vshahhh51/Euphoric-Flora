@@ -1,3 +1,9 @@
+import {
+  loginWithGoogle,
+  loginWithGithub,
+  firebaseSignOut,
+} from "./FirebaseConfig";
+
 function EuphoricFlora() {
   const [cart, setCart] = React.useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -648,7 +654,7 @@ function EuphoricFlora() {
                   onClick={() => filterByCategory("occasion")}
                   className="px-6 py-3 bg-white border-2 border-amber-900 text-amber-900 rounded-lg hover:bg-amber-50 transition font-medium"
                 >
-                  Build Your Own Bouquet
+                  Collections
                 </button>
                 <button
                   onClick={() => {
@@ -666,7 +672,7 @@ function EuphoricFlora() {
 
             <section>
               <h3 className="text-3xl font-bold text-amber-900 mb-6">
-                {searchQuery ? "Search Results" : "Best Sellers"}
+                {searchQuery ? "Search Results" : "Collections"}
               </h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {displayedProducts.map((item) => (
@@ -827,7 +833,7 @@ function EuphoricFlora() {
               <div className="space-y-2 text-amber-800">
                 <div className="flex items-center gap-2">
                   <span>📞</span>
-                  <span>(555) 123-4567</span>
+                  <span>+1 111 111 1111</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>✉️</span>
@@ -835,7 +841,7 @@ function EuphoricFlora() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span>📍</span>
-                  <span>123 Bloom Street</span>
+                  <span>1600 Holloway ave</span>
                 </div>
               </div>
             </div>
