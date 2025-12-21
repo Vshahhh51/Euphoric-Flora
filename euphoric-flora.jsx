@@ -254,11 +254,22 @@ function EuphoricFlora() {
       const name = user.displayName || "";
       const email = user.email || "";
 
-      setCurrentUser({ name, email });
-      await saveUserToDb(name, email);
+      // Save to database and get user ID
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+      });
+      const userData = await res.json();
 
+      if (!res.ok) {
+        throw new Error(userData.error || "Failed to save user");
+      }
+
+      setCurrentUser({ id: userData.id, name: userData.name, email: userData.email });
       setIsLoggedIn(true);
-      setCurrentPage("profile");
+      setCurrentPage("home");
+      await fetchUserOrders(userData.id);
     } catch (err) {
       console.error("Social login error:", err);
       let errorMessage = err.message || "Unknown error";
@@ -497,6 +508,28 @@ function EuphoricFlora() {
       return (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <h2 className="text-4xl font-bold text-amber-900 mb-6">Login / Sign Up</h2>
+          
+          {/* Social Login Options */}
+          <div className="mb-8">
+            <div className="bg-white border-2 border-rose-200 rounded-lg p-6">
+              <h3 className="text-lg font-bold text-amber-900 mb-4 text-center">Quick Login</h3>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() => handleSocialLogin("Google")}
+                  className="flex-1 py-3 bg-white border-2 border-blue-400 text-blue-600 rounded-lg hover:bg-blue-50 transition font-semibold flex items-center justify-center gap-2"
+                >
+                  <span>📧</span> Login with Google
+                </button>
+                <button
+                  onClick={() => handleSocialLogin("GitHub")}
+                  className="flex-1 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition font-semibold flex items-center justify-center gap-2"
+                >
+                  <span>🐙</span> Login with GitHub
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-8">
             {/* Login Form */}
             <div className="bg-white border-2 border-rose-200 rounded-lg p-8">

@@ -28,13 +28,13 @@ const db = new sqlite3.Database(path.join(__dirname, "database.sqlite"), (err) =
   }
 });
 
-// Create users table with password field
+// Create users table with password field (password is optional for social logins)
 db.run(
   `CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
+      password TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   (err) => {
@@ -183,6 +183,35 @@ app.get("/api/orders/:userId", (req, res) => {
     }));
 
     res.json(orders);
+  });
+});
+
+// ---- ADD/UPDATE USER (for social logins) ----
+app.post("/api/users", (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ error: "Name and email are required" });
+  }
+
+  // Insert or update based on email (for social logins, no password)
+  const sql = `
+    INSERT INTO users (name, email)
+    VALUES (?, ?)
+    ON CONFLICT(email) DO UPDATE SET name = excluded.name
+  `;
+
+  db.run(sql, [name, email], function (err) {
+    if (err) {
+      console.error("Error saving user:", err);
+      return res.status(500).json({ error: "Failed to save user" });
+    }
+
+    // Return the inserted or updated row
+    db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
+      if (err) return res.status(500).json({ error: "Failed to fetch saved user" });
+      res.status(201).json(row);
+    });
   });
 });
 
