@@ -5,11 +5,16 @@ function EuphoricFlora() {
   const [showCart, setShowCart] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState("home");
-  const [currentUser, setCurrentUser] = React.useState({ name: "", email: "" });
+  const [currentUser, setCurrentUser] = React.useState({ id: null, name: "", email: "" });
   const [showCheckout, setShowCheckout] = React.useState(false);
   const [showThankYou, setShowThankYou] = React.useState(false);
 
-  // NEW: DB-related state
+  // Auth state
+  const [showLoginForm, setShowLoginForm] = React.useState(true);
+  const [authMessage, setAuthMessage] = React.useState("");
+  
+  // Orders state
+  const [orders, setOrders] = React.useState([]);
   const [dbUsers, setDbUsers] = React.useState([]);
   const [dbStatus, setDbStatus] = React.useState("");
 
@@ -268,20 +273,125 @@ function EuphoricFlora() {
     }
   };
 
-  // UPDATED: email signup now saves to DB
+  // Email signup with password
   const handleEmailSignup = async (event) => {
     event.preventDefault();
+    setAuthMessage("Creating account...");
     const formData = new FormData(event.target);
     const name = formData.get("name");
     const email = formData.get("email");
+    const password = formData.get("password");
 
-    if (name && email) {
-      await saveUserToDb(name, email);
-      setCurrentUser({ name, email });
+    if (!name || !email || !password) {
+      setAuthMessage("All fields are required");
+      return;
     }
 
-    setIsLoggedIn(true);
-    setCurrentPage("profile");
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAuthMessage(data.error || "Signup failed");
+        return;
+      }
+
+      setCurrentUser({ id: data.id, name: data.name, email: data.email });
+      setIsLoggedIn(true);
+      setCurrentPage("home");
+      setAuthMessage("");
+    } catch (err) {
+      console.error("Signup error:", err);
+      setAuthMessage("Error creating account");
+    }
+  };
+
+  // Email login
+  const handleEmailLogin = async (event) => {
+    event.preventDefault();
+    setAuthMessage("Logging in...");
+    const formData = new FormData(event.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (!email || !password) {
+      setAuthMessage("Email and password are required");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAuthMessage(data.error || "Login failed");
+        return;
+      }
+
+      setCurrentUser({ id: data.id, name: data.name, email: data.email });
+      setIsLoggedIn(true);
+      setCurrentPage("home");
+      setAuthMessage("");
+      await fetchUserOrders(data.id);
+    } catch (err) {
+      console.error("Login error:", err);
+      setAuthMessage("Error logging in");
+    }
+  };
+
+  // Fetch user orders
+  const fetchUserOrders = async (userId) => {
+    try {
+      const res = await fetch(`/api/orders/${userId}`);
+      const data = await res.json();
+      if (res.ok) {
+        setOrders(data);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
+
+  // Create order
+  const handleOrderCreation = async (orderData) => {
+    if (!currentUser.id) {
+      alert("Please login to place an order");
+      return false;
+    }
+
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: currentUser.id,
+          user_email: currentUser.email,
+          items: orderData.items,
+          total_price: orderData.total_price,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert("Failed to create order: " + (data.error || "Unknown error"));
+        return false;
+      }
+
+      await fetchUserOrders(currentUser.id);
+      return true;
+    } catch (err) {
+      console.error("Error creating order:", err);
+      alert("Error creating order");
+      return false;
+    }
   };
 
   const addToCart = (product) => {
@@ -383,6 +493,94 @@ function EuphoricFlora() {
   }, [currentPage, isLoggedIn]);
 
   const renderPage = () => {
+    if (currentPage === "login") {
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <h2 className="text-4xl font-bold text-amber-900 mb-6">Login / Sign Up</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Login Form */}
+            <div className="bg-white border-2 border-rose-200 rounded-lg p-8">
+              <h3 className="text-2xl font-bold text-amber-900 mb-6">Returning Customers</h3>
+              <form onSubmit={handleEmailLogin} className="space-y-4">
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="••••••••"
+                  />
+                </div>
+                {authMessage && <p className="text-red-600 text-sm">{authMessage}</p>}
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold"
+                >
+                  Login
+                </button>
+              </form>
+            </div>
+
+            {/* Signup Form */}
+            <div className="bg-white border-2 border-rose-200 rounded-lg p-8">
+              <h3 className="text-2xl font-bold text-amber-900 mb-6">New Customers</h3>
+              <form onSubmit={handleEmailSignup} className="space-y-4">
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">Full Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-amber-900 mb-2 font-semibold">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    minLength="6"
+                    className="w-full px-4 py-2 border-2 border-rose-200 rounded-lg focus:outline-none focus:border-rose-400"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+                {authMessage && <p className="text-red-600 text-sm">{authMessage}</p>}
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-rose-400 text-white rounded-lg hover:bg-rose-500 transition font-semibold"
+                >
+                  Create Account
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (currentPage === "store") {
       return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -497,30 +695,32 @@ function EuphoricFlora() {
               Logout
             </button>
 
-            {/* NEW: Users from database */}
+            {/* Orders section */}
             <div className="mt-8">
               <h3 className="text-xl font-bold text-amber-900 mb-3">
-                Users in Database
+                Your Orders
               </h3>
-              {dbStatus && (
-                <p className="text-sm text-amber-700 mb-2">{dbStatus}</p>
+              {orders.length === 0 ? (
+                <p className="text-amber-800">You haven't placed any orders yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {orders.map((order) => (
+                    <div
+                      key={order.id}
+                      className="bg-pink-50 border border-rose-200 rounded-lg px-4 py-3"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-amber-900">Order #{order.id}</p>
+                          <p className="text-sm text-amber-700">{order.created_at}</p>
+                        </div>
+                        <p className="text-lg font-bold text-amber-900">${order.total_price}</p>
+                      </div>
+                      <p className="text-sm text-amber-700 mt-1">Status: <span className="font-semibold">{order.status}</span></p>
+                    </div>
+                  ))}
+                </div>
               )}
-              <div className="space-y-2">
-                {dbUsers.map((u) => (
-                  <div
-                    key={u.id}
-                    className="flex items-center justify-between bg-pink-50 border border-rose-200 rounded-lg px-4 py-2"
-                  >
-                    <span className="font-medium text-amber-900">{u.name}</span>
-                    <span className="text-sm text-amber-700">{u.email}</span>
-                  </div>
-                ))}
-                {!dbUsers.length && !dbStatus && (
-                  <p className="text-sm text-amber-700">
-                    No users found yet. Sign up with email to create one.
-                  </p>
-                )}
-              </div>
             </div>
           </div>
         </div>
@@ -1087,11 +1287,23 @@ function EuphoricFlora() {
             
             <form 
               className="p-6 space-y-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setShowCheckout(false);
-                setCart([]);
-                setShowThankYou(true);
+                if (!isLoggedIn) {
+                  alert("Please login to checkout");
+                  setShowCheckout(false);
+                  setCurrentPage("login");
+                  return;
+                }
+                const success = await handleOrderCreation({
+                  items: cart,
+                  total_price: getTotalPrice(),
+                });
+                if (success) {
+                  setShowCheckout(false);
+                  setCart([]);
+                  setShowThankYou(true);
+                }
               }}
             >
               <div>

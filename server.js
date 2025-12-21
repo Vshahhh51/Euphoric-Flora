@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,23 +28,167 @@ const db = new sqlite3.Database(path.join(__dirname, "database.sqlite"), (err) =
   }
 });
 
-// Create table if not exists
+// Create users table with password field
 db.run(
   `CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   (err) => {
-    if (err) console.error("Error creating table:", err);
+    if (err) console.error("Error creating users table:", err);
     else console.log("Users table ready.");
   }
 );
 
-// ---- GET USERS ----
+// Create orders table
+db.run(
+  `CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      user_email TEXT NOT NULL,
+      items TEXT NOT NULL,
+      total_price REAL NOT NULL,
+      status TEXT DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+  )`,
+  (err) => {
+    if (err) console.error("Error creating orders table:", err);
+    else console.log("Orders table ready.");
+  }
+);
+
+// ---- SIGNUP ----
+app.post("/api/auth/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Name, email, and password are required" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const sql = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+    
+    db.run(sql, [name, email, hashedPassword], function(err) {
+      if (err) {
+        if (err.message.includes("UNIQUE constraint failed")) {
+          return res.status(400).json({ error: "Email already registered" });
+        }
+        console.error("Error creating user:", err);
+        return res.status(500).json({ error: "Failed to create account" });
+      }
+
+      res.status(201).json({ 
+        id: this.lastID,
+        name: name,
+        email: email,
+        message: "Account created successfully" 
+      });
+    });
+  } catch (err) {
+    console.error("Error hashing password:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ---- LOGIN ----
+app.post("/api/auth/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user) => {
+    if (err) {
+      console.error("Error fetching user:", err);
+      return res.status(500).json({ error: "Failed to login" });
+    }
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    try {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+
+      res.json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        message: "Login successful"
+      });
+    } catch (err) {
+      console.error("Error comparing password:", err);
+      res.status(500).json({ error: "Server error" });
+    }
+  });
+});
+
+// ---- CREATE ORDER ----
+app.post("/api/orders", (req, res) => {
+  const { user_id, user_email, items, total_price } = req.body;
+
+  if (!user_id || !user_email || !items || total_price === undefined) {
+    return res.status(400).json({ error: "Missing required order fields" });
+  }
+
+  const itemsJson = JSON.stringify(items);
+  const sql = `INSERT INTO orders (user_id, user_email, items, total_price) VALUES (?, ?, ?, ?)`;
+  
+  db.run(sql, [user_id, user_email, itemsJson, total_price], function(err) {
+    if (err) {
+      console.error("Error creating order:", err);
+      return res.status(500).json({ error: "Failed to create order" });
+    }
+
+    res.status(201).json({
+      id: this.lastID,
+      user_id: user_id,
+      user_email: user_email,
+      items: items,
+      total_price: total_price,
+      status: "pending",
+      message: "Order created successfully"
+    });
+  });
+});
+
+// ---- GET USER ORDERS ----
+app.get("/api/orders/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  db.all(`SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`, [userId], (err, rows) => {
+    if (err) {
+      console.error("Error fetching orders:", err);
+      return res.status(500).json({ error: "Failed to fetch orders" });
+    }
+
+    const orders = rows.map(order => ({
+      ...order,
+      items: JSON.parse(order.items)
+    }));
+
+    res.json(orders);
+  });
+});
+
+// ---- GET ALL USERS (for admin - optional) ----
 app.get("/api/users", (req, res) => {
-  db.all(`SELECT * FROM users ORDER BY created_at DESC`, [], (err, rows) => {
+  db.all(`SELECT id, name, email, created_at FROM users ORDER BY created_at DESC`, [], (err, rows) => {
     if (err) {
       console.error("Error fetching users:", err);
       return res.status(500).json({ error: "Failed to fetch users" });
@@ -52,38 +197,8 @@ app.get("/api/users", (req, res) => {
   });
 });
 
-// ---- ADD/UPDATE USER ----
-app.post("/api/users", (req, res) => {
-  const { name, email } = req.body;
-
-  if (!name || !email) {
-    return res.status(400).json({ error: "Name and email are required" });
-  }
-
-  // Insert or update based on email
-  const sql = `
-    INSERT INTO users (name, email)
-    VALUES (?, ?)
-    ON CONFLICT(email) DO UPDATE SET name = excluded.name
-  `;
-
-  db.run(sql, [name, email], function (err) {
-    if (err) {
-      console.error("Error saving user:", err);
-      return res.status(500).json({ error: "Failed to save user" });
-    }
-
-    // Return the inserted or updated row
-    db.get(`SELECT * FROM users WHERE email = ?`, [email], (err, row) => {
-      if (err) return res.status(500).json({ error: "Failed to fetch saved user" });
-      res.status(201).json(row);
-    });
-  });
-});
-
 // ---- Firebase Config ----
 app.get("/api/firebase-config", (req, res) => {
-  // Strip any quotes from the API key
   let apiKey = process.env.FIREBASE_API_KEY || "";
   apiKey = apiKey.replace(/^["']|["']$/g, "");
   
