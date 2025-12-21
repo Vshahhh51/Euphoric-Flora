@@ -226,6 +226,67 @@ app.get("/api/users", (req, res) => {
   });
 });
 
+// ---- ADMIN DASHBOARD (view all data) ----
+app.get("/admin", (req, res) => {
+  let html = `
+    <html>
+    <head>
+      <title>Admin Dashboard</title>
+      <style>
+        body { font-family: Arial; margin: 20px; background: #f5f5f5; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f5f5f5; font-weight: bold; }
+        tr:hover { background: #f9f9f9; }
+        .section { margin-bottom: 40px; }
+        .empty { color: #999; font-style: italic; }
+      </style>
+    </head>
+    <body>
+      <h1>🌸 Euphoric Flora - Admin Dashboard</h1>
+  `;
+
+  // Get users
+  db.all(`SELECT id, name, email, created_at FROM users`, [], (err, users) => {
+    if (!err && users.length > 0) {
+      html += `
+        <div class="section">
+          <h2>Users (${users.length})</h2>
+          <table>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Created</th></tr>
+      `;
+      users.forEach(u => {
+        html += `<tr><td>${u.id}</td><td>${u.name}</td><td>${u.email}</td><td>${u.created_at}</td></tr>`;
+      });
+      html += `</table></div>`;
+    } else {
+      html += `<div class="section"><p class="empty">No users yet</p></div>`;
+    }
+
+    // Get orders
+    db.all(`SELECT id, user_id, user_email, total_price, status, created_at FROM orders`, [], (err, orders) => {
+      if (!err && orders.length > 0) {
+        html += `
+          <div class="section">
+            <h2>Orders (${orders.length})</h2>
+            <table>
+              <tr><th>ID</th><th>User ID</th><th>Email</th><th>Total</th><th>Status</th><th>Created</th></tr>
+        `;
+        orders.forEach(o => {
+          html += `<tr><td>${o.id}</td><td>${o.user_id}</td><td>${o.user_email}</td><td>$${o.total_price}</td><td>${o.status}</td><td>${o.created_at}</td></tr>`;
+        });
+        html += `</table></div>`;
+      } else {
+        html += `<div class="section"><p class="empty">No orders yet</p></div>`;
+      }
+
+      html += `</body></html>`;
+      res.send(html);
+    });
+  });
+});
+
 // ---- Firebase Config ----
 app.get("/api/firebase-config", (req, res) => {
   let apiKey = process.env.FIREBASE_API_KEY || "";
